@@ -50,6 +50,10 @@ server.listen(PORT, ()=>{
   console.log("Server listening on port " + PORT)
 })
 
+app.get('/', (req,res) => {
+  res.send("Welcome");
+})
+
 app.post('/login', (req,res)=>{
   const username = req.body.username;
   const password = req.body.password;
