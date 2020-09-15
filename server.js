@@ -18,15 +18,15 @@ const users = [
 ]
 
 io.on('connect',socket=>{
-  socket.on('broadcast-to-server',(envelope)=>{
-      socket.to('conference_room').emit('broadcast-to-clients',envelope);
-  })
   socket.on('login',(username)=>{
       socket.join('conference_room');
       socket.join('PM_'+username);
       connectedUsers.push({username: username, id: socket.id});
       broadcastOnlineUsersList();
       console.log(connectedUsers);
+  })
+  socket.on('broadcast-to-server',(envelope)=>{
+      socket.to('conference_room').emit('broadcast-to-clients',envelope);
   })
   socket.on('personal_message',(envelope)=>{
     socket.to('PM_'+envelope.to).emit('personal_message',envelope);
@@ -39,6 +39,12 @@ io.on('connect',socket=>{
     broadcastOnlineUsersList();
     console.log(connectedUsers);
   })
+
+  socket.on('image',image => {
+    socket.to('conference_room').emit('image_received',image);
+  });
+
+
 })
 
 const broadcastOnlineUsersList = () =>{
