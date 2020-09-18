@@ -26,10 +26,16 @@ io.on('connect',socket=>{
   socket.on('login',(username)=>{
       socket.join('conference_room');
       socket.join('PM_'+username);
-      connectedUsers.push({username: username, id: socket.id});
+      connectedUsers.push({username: username, id: socket.id, peerId: null});
       broadcastOnlineUsersList();
       console.log(connectedUsers);
   })
+
+  socket.on('peer-login', (peerId)=>{
+    console.log(peerId)
+  })
+
+
   socket.on('broadcast-to-server',(envelope)=>{
       socket.to('conference_room').emit('broadcast-to-clients',envelope);
   })
@@ -52,10 +58,12 @@ io.on('connect',socket=>{
   peerServer.on('connection', client =>{
     console.log("peer client connected: ", client.id);
   });
-  socket.on('make_call_request', (from_peerId, to_id) => {
-    if(to_id !== 'conference'){
-      socket.to('PM_'+to_id).emit('incoming_call_request',from_peerId);
-    }
+  socket.on('make_call_request', (from_peerId, to_user, from_user) => {
+    console.log(to_user)
+      socket.to('PM_'+to_user).emit('incoming_call_request',from_peerId, from_user);
+  });
+  socket.on('end_ongoing_call', (with_user) => {
+      socket.to('PM_'+with_user).emit('end_ongoing_call');
   });
   ///////////////////////////////
 
