@@ -8,6 +8,11 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 app.use(cors());
 
+const { PeerServer } = require('peer');
+const peerServer = new PeerServer({
+  path: '/chat',
+  port: 3001
+})
 
 var connectedUsers = [];
 
@@ -39,11 +44,20 @@ io.on('connect',socket=>{
     broadcastOnlineUsersList();
     console.log(connectedUsers);
   })
-
   socket.on('image',image => {
     socket.to('conference_room').emit('image_received',image);
   });
 
+  ///////////////////////////////
+  peerServer.on('connection', client =>{
+    console.log("peer client connected: ", client.id);
+  });
+  socket.on('make_call_request', (from_peerId, to_id) => {
+    if(to_id !== 'conference'){
+      socket.to('PM_'+to_id).emit('incoming_call_request',from_peerId);
+    }
+  });
+  ///////////////////////////////
 
 })
 
