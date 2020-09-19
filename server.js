@@ -21,7 +21,10 @@ io.on('connect',socket=>{
   socket.on('login',(username)=>{
       socket.join('conference_room');
       socket.join('PM_'+username);
-      connectedUsers.push({username: username, id: socket.id});
+      const index = connectedUsers.findIndex(user => user.username === username);
+      if(index<0){
+        connectedUsers.push({username: username, id: socket.id});
+      }
       broadcastOnlineUsersList();
       console.log(connectedUsers);
   })
