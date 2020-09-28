@@ -8,7 +8,6 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 app.use(cors());
 
-
 var connectedUsers = [];
 
 const users = [
@@ -42,11 +41,14 @@ io.on('connect',socket=>{
     broadcastOnlineUsersList();
     console.log(connectedUsers);
   })
-
   socket.on('image',image => {
     socket.to('conference_room').emit('image_received',image);
   });
 
+  socket.on('make_call_request', (from_peerId, to_user, from_user) => {
+      console.log('Call request from '+ from_user + 'to ' + to_user);
+      socket.to('PM_'+to_user).emit('incoming_call_request',from_peerId, from_user);
+  });
 
 })
 
