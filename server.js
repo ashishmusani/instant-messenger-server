@@ -52,6 +52,10 @@ io.on('connect',socket=>{
       socket.to('PM_'+to_user).emit('incoming_call_request',from_peerId, from_user);
   });
 
+  socket.on('end_ongoing_call', (with_user) => {
+    socket.to('PM_'+with_user).emit('end_ongoing_call');
+  });
+
 })
 
 const broadcastOnlineUsersList = () =>{
