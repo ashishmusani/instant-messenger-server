@@ -2,11 +2,13 @@ const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
+const path = require('path')
 const cors = require('cors')
 const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(cors());
+app.use(express.static(path.join(__dirname, './client/build')));
 
 var connectedUsers = [];
 
@@ -61,9 +63,9 @@ server.listen(PORT, ()=>{
   console.log("Server listening on port " + PORT)
 })
 
-app.get('/', (req,res) => {
-  res.send("Welcome");
-})
+// app.get('/', (req,res) => {
+//   res.send("Welcome");
+// })
 
 app.post('/login', (req,res)=>{
   const username = req.body.username;
